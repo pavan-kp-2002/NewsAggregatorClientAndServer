@@ -21,7 +21,7 @@ public class ArticlesController {
         return ResponseEntity.ok(articles);
     }
 
-    @GetMapping("/date-range")
+    @PostMapping("/date-range")
     public ResponseEntity<List<Article>> getArticlesByDateRange(@RequestBody ArticleDateRangeAndCategoryDTO dateRangeAndCategoryDTO){
         List<Article> articles = articleService.getArticlesByDateRangeAndCategory(dateRangeAndCategoryDTO);
         return ResponseEntity.ok(articles);

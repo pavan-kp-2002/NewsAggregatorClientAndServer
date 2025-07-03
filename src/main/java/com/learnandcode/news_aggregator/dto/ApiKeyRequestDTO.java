@@ -11,6 +11,4 @@ public class ApiKeyRequestDTO {
         this.apiKey = apiKey;
     }
 
-
-
 }

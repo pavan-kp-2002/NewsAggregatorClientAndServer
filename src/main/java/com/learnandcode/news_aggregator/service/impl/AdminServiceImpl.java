@@ -106,6 +106,7 @@ public class AdminServiceImpl implements AdminService {
 
     private ExternalServerDetailsDTO mapToDetailsDTO(ExternalServer server) {
         ExternalServerDetailsDTO dto = new ExternalServerDetailsDTO();
+        dto.setServerId(server.getServerId());
         dto.setServerName(server.getServerName());
         dto.setApiKey(server.getApiKey());
         dto.setEndPoint(server.getEndPoint());

@@ -36,6 +36,7 @@ public class NotificationServiceImpl implements NotificationService {
                         notification.getArticle().getTitle(),
                         notification.getArticle().getUrl()));
                 notification.setEmailSent(true);
+                notification.setNotificationRead(true);
             }
             notificationRepository.saveAll(notificationList);
             return notificationDTOList;

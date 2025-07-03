@@ -1,9 +1,18 @@
 package com.learnandcode.news_aggregator.dto;
 
 public class ExternalServerDetailsDTO {
+    private Long serverId;
     private String serverName;
     private String apiKey;
     private String endPoint;
+
+    public Long getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(Long serverId) {
+        this.serverId = serverId;
+    }
 
     public String getEndPoint() {
         return endPoint;
