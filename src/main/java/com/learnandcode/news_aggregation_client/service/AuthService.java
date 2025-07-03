@@ -31,7 +31,9 @@ public class AuthService {
             try (Response response = client.newCall(httpRequest).execute()) {
                 String responseBody = response.body().string();
                 if (!response.isSuccessful()) {
-                    return new AuthResult(false,responseBody);
+                    JsonNode errorNode = objectMapper.readTree(responseBody);
+                    String errorMessage = errorNode.has("message") ? errorNode.get("message").asText() : "Unknown error";
+                    return new AuthResult(false,errorMessage);
                 }
                 SignupResponseDTO resp = objectMapper.readValue(responseBody, SignupResponseDTO.class);
                 return new AuthResult(true, "Sign-up successful! Message: " + resp.message + ", User Name" +resp.username);
@@ -53,10 +55,13 @@ public class AuthService {
                     .build();
 
             try (Response response = client.newCall(httpRequest).execute()) {
+                String responseBody = response.body().string();
                 if (!response.isSuccessful()) {
-                    return new AuthResult(false, response.body().string());
+                    JsonNode errorNode = objectMapper.readTree(responseBody);
+                    String  errorMessage = errorNode.has("message") ? errorNode.get("message").asText() : "Unknown error";
+                    return new AuthResult(false, errorMessage);
                 }
-                this.jwtToken = response.body().string();
+                this.jwtToken = responseBody;
                 TokenStore.setToken(this.jwtToken);
                 String[] parts = jwtToken.split("\\.");
                 if (parts.length == 3) {
