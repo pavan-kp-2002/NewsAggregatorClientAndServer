@@ -49,6 +49,7 @@ public  class NewsApiHandler implements ExternalNewsApiHandler {
                     article.setPublishedAt(dto.getPublishedAt());
                     article.setFetchedAt(LocalDateTime.now());
                     article.setCategoryId(categoryResolver.resolveCategory(dto.getTitle(),dto.getDescription()));
+                    article.setHidden(false);
                     articles.add(article);
                 }
             }

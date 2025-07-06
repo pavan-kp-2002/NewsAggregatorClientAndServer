@@ -11,6 +11,9 @@ public class Category {
     private Long id;
     private String name;
 
+    @Column(nullable = false)
+    private boolean hidden = false;
+
     public Category() {
     }
 
@@ -36,4 +39,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<UserCategoryConfiguration> userCategoryConfigurations;
+
+    public boolean isHidden() { return hidden; }
+    public void setHidden(boolean hidden) { this.hidden = hidden; }
 }

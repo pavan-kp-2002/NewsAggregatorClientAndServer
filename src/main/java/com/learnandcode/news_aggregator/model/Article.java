@@ -28,6 +28,9 @@ public class Article {
     @JoinColumn(name = "category_id", nullable = false)
     private Category categoryId;
 
+    @Column(nullable = false)
+    private boolean hidden = false;
+
     public Long getArticleId() {
         return articleId;
     }
@@ -87,4 +90,7 @@ public class Article {
     public void setCategoryId(Category categoryId) {
         this.categoryId = categoryId;
     }
+
+    public boolean isHidden() { return hidden; }
+    public void setHidden(boolean hidden) { this.hidden = hidden; }
 }
