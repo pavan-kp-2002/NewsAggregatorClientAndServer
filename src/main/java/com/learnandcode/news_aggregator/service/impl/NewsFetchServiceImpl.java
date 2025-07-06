@@ -3,6 +3,7 @@ package com.learnandcode.news_aggregator.service.impl;
 import com.learnandcode.news_aggregator.factory.NewsApiHandlerFactory;
 import com.learnandcode.news_aggregator.model.*;
 import com.learnandcode.news_aggregator.repositories.*;
+import com.learnandcode.news_aggregator.service.EmailService;
 import com.learnandcode.news_aggregator.service.ExternalNewsApiHandler;
 import com.learnandcode.news_aggregator.service.NewsFetchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +30,29 @@ public class NewsFetchServiceImpl implements NewsFetchService {
     private UserKeywordConfigurationRepository userKeywordConfigurationRepo;
     @Autowired
     private NotificationRepository notificationRepository;
+    @Autowired
+    private EmailService emailService;
 
+    @org.springframework.scheduling.annotation.Async
+    public void sendPendingNotificationsForUser(User user) {
+        List<Notification> pending = notificationRepository.findByUserAndEmailSentFalse(user);
+        if (pending.isEmpty()) return;
+
+        StringBuilder body = new StringBuilder("Hello " + user.getUsername() + ",\n\nYou have new articles:\n");
+        for (Notification n : pending) {
+            Article article = n.getArticle();
+            body.append("- ID: ").append(article.getArticleId())
+                .append(", Title: ").append(article.getTitle())
+                .append(", Link: ").append(article.getUrl())
+                .append("\n");
+            n.setEmailSent(true);
+        }
+        emailService.sendEmail(user.getEmail(), "Your News Notifications", body.toString());
+        notificationRepository.saveAll(pending);
+    }
 
     //private final long fetchInterval = 4 * 60 * 60 * 1000;
-    private final long testInterval = 1 * 60 * 60 * 1000;// for testing
+    private final long testInterval = 1 * 60 * 1000;// for testing
     @Override
     @Scheduled(fixedRate = testInterval)
     public void fetchArticlesFromAllExternalApis() {
@@ -89,6 +109,14 @@ public class NewsFetchServiceImpl implements NewsFetchService {
                     }
 
                     notificationRepository.saveAll(notificationsToSave);
+
+                    Set<User> affectedUsers = new HashSet<>();
+                    for (Notification n : notificationsToSave) {
+                        affectedUsers.add(n.getUser());
+                    }
+                    for (User user : affectedUsers) {
+                        sendPendingNotificationsForUser(user);
+                    }
                 }
                 server.setStatus(ServerStatus.ACTIVE);
             }catch (Exception e){

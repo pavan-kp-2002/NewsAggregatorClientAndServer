@@ -2,6 +2,8 @@ package com.learnandcode.news_aggregator.model;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "categories")
 public class Category {
@@ -31,4 +33,7 @@ public class Category {
     public void setName(String name) {
         this.name = name;
     }
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<UserCategoryConfiguration> userCategoryConfigurations;
 }

@@ -62,6 +62,17 @@ public class GlobalExceptionHandler {
         ApiErrorResponse response = new ApiErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(KeywordAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleKeywordAlreadyExistsException(KeywordAlreadyExistsException ex) {
+        ApiErrorResponse response = new ApiErrorResponse(ex.getMessage(), HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(KeywordNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleKeywordNotFoundException(KeywordNotFoundException ex) {
+        ApiErrorResponse response = new ApiErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 }
 
 

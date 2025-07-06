@@ -34,6 +34,10 @@ public class CategoryResolver {
             "Technology", List.of(
                     "technology", "gadgets", "tech", "software", "hardware", "ai", "artificial intelligence", "computer", "internet", "app",
                     "robotics", "programming", "coding", "cloud", "cybersecurity", "blockchain", "machine learning", "data science", "mobile", "web"
+            ),
+            "Politics", List.of(
+                    "politics", "trump", "election", "policy", "law", "democracy", "republic", "vote", "candidate", "campaign",
+                    "parliament", "senate", "congress", "legislation", "referendum", "diplomacy", "treaty", "ambassador", "minister", "president","Modi"
             )
     );
 

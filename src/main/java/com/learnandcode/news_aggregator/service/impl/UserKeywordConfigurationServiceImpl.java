@@ -1,6 +1,8 @@
 package com.learnandcode.news_aggregator.service.impl;
 
 import com.learnandcode.news_aggregator.dto.KeywordConfigurationDTO;
+import com.learnandcode.news_aggregator.exception.KeywordAlreadyExistsException;
+import com.learnandcode.news_aggregator.exception.KeywordNotFoundException;
 import com.learnandcode.news_aggregator.exception.UserNotFoundException;
 import com.learnandcode.news_aggregator.model.NotificationConfigurationStatus;
 import com.learnandcode.news_aggregator.model.User;
@@ -29,7 +31,7 @@ public class UserKeywordConfigurationServiceImpl implements UserKeywordConfigura
         if (userOpted.isPresent()) {
             List<UserKeywordConfiguration> userKeywordConfigurationList =  userKeywordConfigurationRepository.findAllByUser(userOpted.get());
             if (userKeywordConfigurationList.isEmpty()) {
-                throw new UserNotFoundException("No keyword configurations found for the user ");
+                throw new KeywordNotFoundException("No keyword configured for the user. Add keywords to get started.");
             }else {
                 return userKeywordConfigurationList.stream()
                         .map(config -> new KeywordConfigurationDTO(
@@ -47,14 +49,10 @@ public class UserKeywordConfigurationServiceImpl implements UserKeywordConfigura
     public void editKeywordConfiguration(String keyword) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOpted = userRepository.findByUsername(userName);
-        if(!userOpted.isPresent()){
+        if(userOpted.isEmpty()){
             throw new UserNotFoundException("User with the given username does not exist "+ userName);
         }
-//        boolean exists = userKeywordConfigurationRepository.existsByUserAndKeyword(userOpted.get(), keyword);
-//        if(!exists){
-//            throw new IllegalArgumentException("Keyword not set for the user");
-//        }
-        Optional<UserKeywordConfiguration> configurationOpt = userKeywordConfigurationRepository.findByUserAndKeyword(userOpted.get(), keyword);
+        Optional<UserKeywordConfiguration> configurationOpt = userKeywordConfigurationRepository.findByUserAndKeywordIgnoreCase(userOpted.get(), keyword);
         if(configurationOpt.isPresent()){
             UserKeywordConfiguration configuration = configurationOpt.get();
             NotificationConfigurationStatus currentStatus = configuration.getKeywordConfigurationStatus();
@@ -66,7 +64,7 @@ public class UserKeywordConfigurationServiceImpl implements UserKeywordConfigura
             );
             userKeywordConfigurationRepository.save(configuration);
         } else {
-            throw new IllegalArgumentException("Keyword configuration not found for the user");
+            throw new KeywordNotFoundException("Keyword: " + keyword + " not found." + "Add it first to edit.");
         }
     }
 
@@ -77,9 +75,9 @@ public class UserKeywordConfigurationServiceImpl implements UserKeywordConfigura
             throw new UserNotFoundException("User with the given username does not exist "+ userName);
         }
 
-        boolean exists = userKeywordConfigurationRepository.existsByUserAndKeyword(userOpted.get(), keyword);
+        boolean exists = userKeywordConfigurationRepository.existsByUserAndKeywordIgnoreCase(userOpted.get(), keyword);
         if(exists){
-            throw new IllegalArgumentException("Keyword already exists for this user");
+            throw new KeywordAlreadyExistsException("Keyword: " + keyword + " configuration already exists for this user");
         }
 
         UserKeywordConfiguration configuration = new UserKeywordConfiguration();

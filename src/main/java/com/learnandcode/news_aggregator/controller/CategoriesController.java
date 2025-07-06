@@ -6,6 +6,7 @@ import com.learnandcode.news_aggregator.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -22,6 +23,7 @@ public class CategoriesController {
         List<Category> categories = adminService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<Category> addCategory(@RequestBody CategoryDTO categoryNameRequest) {
         Category category = adminService.addCategory(categoryNameRequest);

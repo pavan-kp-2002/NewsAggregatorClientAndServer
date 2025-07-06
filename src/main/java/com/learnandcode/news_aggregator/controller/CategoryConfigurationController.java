@@ -20,11 +20,6 @@ public class CategoryConfigurationController {
 
     @Autowired
     private UserCategoryConfigurationService categoryConfigurationService;
-
-//    @GetMapping
-//    public ResponseEntity<List<Category>> getAllCategories() {
-//        return ResponseEntity.ok(adminService.getAllCategories());
-//    }
     @GetMapping
     public ResponseEntity<List<UserCategoryConfigurationDTO>> getUserCategoryConfigurations() {
         List<UserCategoryConfigurationDTO> configurations = categoryConfigurationService.getUserCategoryConfigurations();
