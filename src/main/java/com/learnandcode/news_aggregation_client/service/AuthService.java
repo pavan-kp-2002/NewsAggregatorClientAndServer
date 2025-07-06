@@ -69,6 +69,10 @@ public class AuthService {
                     JsonNode payloadNode = objectMapper.readTree(payloadJson);
                     String role = payloadNode.get("role").asText();
                     TokenStore.setRole(role);
+
+                    String userName = payloadNode.has("sub") ? payloadNode.get("sub").asText() : payloadNode.get("userName").asText();
+                    TokenStore.setUserName(userName);
+
                 }
                 return new AuthResult(true, "Login Successful!");
             }

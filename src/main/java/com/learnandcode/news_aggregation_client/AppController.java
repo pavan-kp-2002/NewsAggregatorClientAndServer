@@ -13,7 +13,8 @@ public class AppController {
         menuManager.register("HEADLINES", new HeadlinesOptionMenu(menuManager));
         menuManager.register("CONFIGURE", new ConfigurationMenu(menuManager));
         menuManager.register("NOTIFICATIONS", new NotificationsMenu(menuManager));
-
+        menuManager.register("KEYWORD-CONFIG", new KeywordConfigurationMenu(menuManager));
+        menuManager.register("CATEGORY-CONFIG", new CategoryConfigurationMenu(menuManager));
         menuManager.navigateTo("MAIN");
     }
 }

@@ -103,7 +103,36 @@ public class HeadlineService {
             System.out.println("Error searching articles: " + e.getMessage());
             return Collections.emptyList();
         }
+    }
 
+
+    public boolean reactToArticle(Long articleId, String reactionType) {
+        try {
+            String token = TokenStore.getToken();
+            if (token == null || token.isEmpty()) {
+                System.out.println("User is not authenticated. Please log in first.");
+                return false;
+            }
+            String url = "http://localhost:8080/api/v1/article-reactions/" + articleId + "/react?reactionType=" + reactionType;
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .addHeader("Authorization", "Bearer " + token)
+                    .post(RequestBody.create(new byte[0], null))
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful()) {
+                    System.out.println("Failed to react to article: " + response.message());
+                    return false;
+                }
+                System.out.println("Reaction recorded successfully.");
+                return true;
+            }
+        } catch (Exception e) {
+            System.out.println("Error reacting to article: " + e.getMessage());
+            return false;
+        }
     }
 
     public void printArticles(List<ArticleDTO> articles, String title) {
@@ -125,5 +154,7 @@ public class HeadlineService {
         System.out.println("1. Back");
         System.out.println("2. Logout");
         System.out.println("3. Save Article");
+        System.out.println("4. Like Article");
+        System.out.println("5. Dislike Article");
     }
 }

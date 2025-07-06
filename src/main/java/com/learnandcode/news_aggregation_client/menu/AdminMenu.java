@@ -2,6 +2,7 @@ package com.learnandcode.news_aggregation_client.menu;
 
 import com.learnandcode.news_aggregation_client.service.AdminService;
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
+import com.learnandcode.news_aggregation_client.util.WelcomeMessageHelper;
 
 public class AdminMenu implements Menu {
     private final AdminService adminService = new AdminService();
@@ -13,6 +14,7 @@ public class AdminMenu implements Menu {
     }
     @Override
     public void show() {
+        WelcomeMessageHelper.printWelcomeMessage();
         System.out.println("A D M I N  M E N U");
         System.out.println("1. View the list of external servers and status");
         System.out.println("2. View the external server's details");
@@ -43,10 +45,17 @@ public class AdminMenu implements Menu {
             case "4":
                 // Logic to add a new News Category
                 adminService.viewAllCategories();
-                System.out.println("Enter the new News Category name:");
-                String categoryName = ScannerSingleton.getInstance().nextLine();
+                String categoryName;
+                while (true) {
+                    System.out.println("Enter the new News Category name (one word only):");
+                    categoryName = ScannerSingleton.getInstance().nextLine().trim();
+                    if (!categoryName.isEmpty() && !categoryName.contains(" ")) {
+                        break;
+                    }
+                    System.out.println("Invalid input. Please enter a single word (no spaces).");
+                }
                 String capitalizedName = categoryName.substring(0, 1).toUpperCase() + categoryName.substring(1).toLowerCase();
-                adminService.addCategory(categoryName);
+                adminService.addCategory(capitalizedName);
                 break;
             case "5":
                 // Logic to logout

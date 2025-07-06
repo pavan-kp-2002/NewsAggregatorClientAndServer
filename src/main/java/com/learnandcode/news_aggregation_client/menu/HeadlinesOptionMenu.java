@@ -7,6 +7,7 @@ import com.learnandcode.news_aggregation_client.service.HeadlineService;
 import com.learnandcode.news_aggregation_client.util.ArticlesDisplayOptionsHelper;
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
 import com.learnandcode.news_aggregation_client.util.TokenStore;
+import com.learnandcode.news_aggregation_client.util.WelcomeMessageHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,6 +43,7 @@ public class HeadlinesOptionMenu implements Menu {
 
     @Override
     public void show(){
+        WelcomeMessageHelper.printWelcomeMessage();
         System.out.println("H E A D L I N E S - O P T I O N S");
         System.out.println("1. Today");
         System.out.println("2. Date range");

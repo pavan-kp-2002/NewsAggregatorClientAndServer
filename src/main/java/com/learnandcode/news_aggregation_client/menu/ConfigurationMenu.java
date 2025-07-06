@@ -2,6 +2,7 @@ package com.learnandcode.news_aggregation_client.menu;
 
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
 import com.learnandcode.news_aggregation_client.util.TokenStore;
+import com.learnandcode.news_aggregation_client.util.WelcomeMessageHelper;
 
 public class ConfigurationMenu implements Menu{
     private final MenuManager menuManager;
@@ -11,6 +12,7 @@ public class ConfigurationMenu implements Menu{
     }
     @Override
     public void show() {
+        WelcomeMessageHelper.printWelcomeMessage();
         System.out.println("C O N F I G U R E - N O T I F I C A T I O N S");
         System.out.println("1. Category Configuration");
         System.out.println("2. Keyword Configuration");
@@ -21,10 +23,10 @@ public class ConfigurationMenu implements Menu{
         String configChoice = ScannerSingleton.getInstance().nextLine();
         switch (configChoice) {
             case "1":
-                System.out.println("Category configuration opened.");
+                menuManager.navigateTo("CATEGORY-CONFIG");
                 break;
             case "2":
-                System.out.println("Keyword configuration opened.");
+                menuManager.navigateTo("KEYWORD-CONFIG");
                 break;
             case "3":
                 menuManager.navigateTo("NOTIFICATIONS");

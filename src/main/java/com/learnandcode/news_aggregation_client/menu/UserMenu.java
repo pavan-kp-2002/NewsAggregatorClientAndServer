@@ -6,6 +6,7 @@ import com.learnandcode.news_aggregation_client.service.HeadlineService;
 import com.learnandcode.news_aggregation_client.util.ArticlesDisplayOptionsHelper;
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
 import com.learnandcode.news_aggregation_client.util.TokenStore;
+import com.learnandcode.news_aggregation_client.util.WelcomeMessageHelper;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class UserMenu implements Menu{
     }
 
     public void show() {
+        WelcomeMessageHelper.printWelcomeMessage();
         System.out.println("U S E R - M E N U");
         System.out.println("1. Headlines");
         System.out.println("2. Saved Articles");

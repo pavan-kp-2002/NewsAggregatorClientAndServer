@@ -3,6 +3,7 @@ package com.learnandcode.news_aggregation_client.menu;
 import com.learnandcode.news_aggregation_client.service.NotificationService;
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
 import com.learnandcode.news_aggregation_client.util.TokenStore;
+import com.learnandcode.news_aggregation_client.util.WelcomeMessageHelper;
 
 public class NotificationsMenu implements Menu {
     private final MenuManager menuManager;
@@ -15,6 +16,7 @@ public class NotificationsMenu implements Menu {
 
     @Override
     public void show() {
+        WelcomeMessageHelper.printWelcomeMessage();
         System.out.println("N O T I F I C A T I O N S - M E N U");
         System.out.println("1. View Notifications");
         System.out.println("2. Configure Notifications");

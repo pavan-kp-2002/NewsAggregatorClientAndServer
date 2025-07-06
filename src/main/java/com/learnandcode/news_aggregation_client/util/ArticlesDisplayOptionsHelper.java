@@ -2,9 +2,11 @@ package com.learnandcode.news_aggregation_client.util;
 
 import com.learnandcode.news_aggregation_client.menu.MenuManager;
 import com.learnandcode.news_aggregation_client.service.ArticlesService;
+import com.learnandcode.news_aggregation_client.service.HeadlineService;
 
 public class ArticlesDisplayOptionsHelper {
     private final ArticlesService articlesService;
+    private final HeadlineService headlineService = new HeadlineService();
 
     public ArticlesDisplayOptionsHelper(ArticlesService articlesService) {
             this.articlesService = articlesService;
@@ -28,6 +30,28 @@ public class ArticlesDisplayOptionsHelper {
                 try {
                     long articleId = Long.parseLong(articleIdInput);
                     System.out.println(articlesService.saveArticle(articleId));
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid Article Id. Please enter a valid number.");
+                }
+                break;
+            case "4":
+                System.out.print("Enter Article Id to like: ");
+                String likeIdInput = ScannerSingleton.getInstance().nextLine();
+                try {
+                    long articleId = Long.parseLong(likeIdInput);
+                    boolean result = headlineService.reactToArticle(articleId, "LIKE");
+                    System.out.println(result ? "Article liked." : "Failed to like article.");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid Article Id. Please enter a valid number.");
+                }
+                break;
+            case "5":
+                System.out.print("Enter Article Id to dislike: ");
+                String dislikeIdInput = ScannerSingleton.getInstance().nextLine();
+                try {
+                    long articleId = Long.parseLong(dislikeIdInput);
+                    boolean result = headlineService.reactToArticle(articleId, "DISLIKE");
+                    System.out.println(result ? "Article disliked." : "Failed to dislike article.");
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid Article Id. Please enter a valid number.");
                 }
