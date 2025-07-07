@@ -58,3 +58,5 @@ application-*.properties
 
 # Swagger generated files (if applicable)
 swagger-ui/
+
+src/main/resources/application.properties
