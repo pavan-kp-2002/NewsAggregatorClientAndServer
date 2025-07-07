@@ -10,6 +10,8 @@ import com.learnandcode.news_aggregator.repositories.ArticleRepository;
 import com.learnandcode.news_aggregator.repositories.SavedArticleRepository;
 import com.learnandcode.news_aggregator.repositories.UserRepository;
 import com.learnandcode.news_aggregator.service.SavedArticleService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
     @Autowired
     private SavedArticleRepository savedArticleRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(SavedArticleServiceImpl.class);
 
     @Override
     public void saveArticle(Long articleId) {
@@ -37,6 +40,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
 
         if(articleOpted.isPresent() && userOpted.isPresent()){
             if(savedArticleRepository.existsByUserAndArticle(userOpted.get(), articleOpted.get())){
+                logger.warn("User {} tried to save an article that is already saved: {}", userName, articleId);
                 throw new DuplicateSavedArticleException("Article already saved by this user.");
             }
             else{
@@ -47,6 +51,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
             }
         }
         else {
+            logger.error("Article not found for ID: {}", articleId);
             throw new ArticleNotFoundException("Article with the given ID does not exist");
         }
     }
@@ -57,9 +62,11 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         Optional<User> userOpted = userRepository.findByUsername(userName);
         Optional<Article> articleOpted = articleRepository.findById(articleId);
         if(articleOpted.isEmpty()){
+            logger.error("Article not found for ID: {}", articleId);
             throw new ArticleNotFoundException("Article with the given ID does not exist");
         }
         if(userOpted.isEmpty()){
+            logger.error("User not found for username: {} while deleting article", userName);
             throw new UserNotFoundException("User with the given username does not exist");
         }
 
@@ -68,6 +75,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         if (savedArticle.isPresent()) {
             savedArticleRepository.delete(savedArticle.get());
         } else {
+            logger.error("Saved article not found for user: {} and article ID: {}", userName, articleId);
             throw new IllegalArgumentException("Saved article not found for this user and article");
         }
     }
@@ -80,6 +88,7 @@ public class SavedArticleServiceImpl implements SavedArticleService {
         if (userOpted.isPresent()) {
             return savedArticleRepository.findAllByUser(userOpted.get());
         } else {
+            logger.error("User not found for username: {}", userName);
             throw new UserNotFoundException("User with the given username does not exist");
         }
     }

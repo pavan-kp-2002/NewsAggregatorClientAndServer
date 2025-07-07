@@ -7,6 +7,8 @@ import com.learnandcode.news_aggregator.model.User;
 import com.learnandcode.news_aggregator.repositories.NotificationRepository;
 import com.learnandcode.news_aggregator.repositories.UserRepository;
 import com.learnandcode.news_aggregator.service.NotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ public class NotificationServiceImpl implements NotificationService {
     private UserRepository userRepository;
     @Autowired
     private NotificationRepository notificationRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(NewsFetchServiceImpl.class);
     @Override
     public List<NotificationDTO> getNotificationsForUser() {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -27,6 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .orElseThrow(() -> new UserNotFoundException("User with the given username does not exist"));
         List<Notification> notificationList = notificationRepository.findByUserAndEmailSentFalse(user);
         if (notificationList.isEmpty()) {
+            logger.info("No notifications found for user: {}", userName);
             throw new UserNotFoundException("No notifications found for the user " + userName);
         } else {
             List<NotificationDTO> notificationDTOList = new ArrayList<>();

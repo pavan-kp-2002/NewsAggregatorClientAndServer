@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +25,8 @@ public class ArticleModerationServiceImpl implements ArticleModerationService {
     private BlockedKeywordRepository blockedKeywordRepository;
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private ReportNotificationRepository reportNotificationRepository;
 
     @Override
     public void reportArticle(Long articleId) {
@@ -42,6 +45,20 @@ public class ArticleModerationServiceImpl implements ArticleModerationService {
         report.setUser(user);
         report.setArticle(article);
         reportRepository.save(report);
+        List<User> adminUsers = userRepository.findByUserRole(UserRole.ADMIN);
+        List<ReportNotification> reportNotificationList = new ArrayList<>();
+        for(User admin : adminUsers){
+            ReportNotification reportNotification = new ReportNotification();
+            reportNotification.setReporter(user);
+            reportNotification.setAdmin(admin);
+            reportNotification.setArticle(article);
+            reportNotification.setCreatedAt(LocalDateTime.now());
+            reportNotification.setMessage("An article with ID " + articleId + "and Title: " + article.getTitle() + " has been reported by " + user.getUsername());
+            reportNotification.setRead(false);
+            reportNotificationList.add(reportNotification);
+        }
+
+        reportNotificationRepository.saveAll(reportNotificationList);
 
         long reportCount = reportRepository.countByArticle(article);
         int REPORT_THRESHOLD = 3;

@@ -9,6 +9,8 @@ import com.learnandcode.news_aggregator.repositories.ArticleReactionRepository;
 import com.learnandcode.news_aggregator.repositories.ArticleRepository;
 import com.learnandcode.news_aggregator.repositories.UserRepository;
 import com.learnandcode.news_aggregator.service.ArticleReactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,11 +28,14 @@ public class ArticleReactionServiceImpl implements ArticleReactionService {
     @Autowired
     private UserRepository userRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(ArticleReactionServiceImpl.class);
+
     @Override
     public void reactToArticle(Long articleId, ReactionType reactionType) {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<User> userOpted = userRepository.findByUsername(userName);
         if (!userOpted.isPresent()) {
+            logger.error("User with username {} not found while reacting to article", userName);
             throw new UserNotFoundException("User with the given username does not exist: " + userName);
         }
         User user = userOpted.get();

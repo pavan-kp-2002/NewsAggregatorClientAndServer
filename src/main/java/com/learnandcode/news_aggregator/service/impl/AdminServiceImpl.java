@@ -12,6 +12,8 @@ import com.learnandcode.news_aggregator.repositories.ExternalServerRepository;
 import com.learnandcode.news_aggregator.repositories.UserCategoryConfigurationRepository;
 import com.learnandcode.news_aggregator.repositories.UserRepository;
 import com.learnandcode.news_aggregator.service.AdminService;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,8 @@ public class AdminServiceImpl implements AdminService {
     private UserRepository userRepository;
     @Autowired
     private UserCategoryConfigurationRepository userNotificationConfigurationRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
 
     @Override
     public ExternalServerDetailsDTO addExternalServer(ExternalServerDetailsDTO dto) {
@@ -77,6 +81,7 @@ public class AdminServiceImpl implements AdminService {
     public Category addCategory(CategoryDTO categoryNamerequest) {
         String userId= SecurityContextHolder.getContext().getAuthentication().getName();
         if(categoryRepo.existsByName(categoryNamerequest.getName())){
+            logger.error("User with ID {} attempted to add an existing category: {}", userId, categoryNamerequest.getName());
             throw new CategoryAlreadyExistsException("Category already exists");
         }
         Category category = new Category();

@@ -6,6 +6,8 @@ import com.learnandcode.news_aggregator.repositories.*;
 import com.learnandcode.news_aggregator.service.EmailService;
 import com.learnandcode.news_aggregator.service.ExternalNewsApiHandler;
 import com.learnandcode.news_aggregator.service.NewsFetchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -32,7 +34,7 @@ public class NewsFetchServiceImpl implements NewsFetchService {
     private NotificationRepository notificationRepository;
     @Autowired
     private EmailService emailService;
-
+    private static final Logger logger = LoggerFactory.getLogger(NewsFetchServiceImpl.class);
     @org.springframework.scheduling.annotation.Async
     public void sendPendingNotificationsForUser(User user) {
         List<Notification> pending = notificationRepository.findByUserAndEmailSentFalse(user);
@@ -51,8 +53,8 @@ public class NewsFetchServiceImpl implements NewsFetchService {
         notificationRepository.saveAll(pending);
     }
 
-    //private final long fetchInterval = 4 * 60 * 60 * 1000;
-    private final long testInterval = 1 * 60 * 1000;// for testing
+    private final long fetchInterval = 4 * 60 * 60 * 1000;
+    private final long testInterval = fetchInterval;
     @Override
     @Scheduled(fixedRate = testInterval)
     public void fetchArticlesFromAllExternalApis() {
@@ -120,6 +122,7 @@ public class NewsFetchServiceImpl implements NewsFetchService {
                 }
                 server.setStatus(ServerStatus.ACTIVE);
             }catch (Exception e){
+                logger.error("Error fetching articles from server {}: {}", server.getServerName(), e.getMessage());
                 server.setStatus(ServerStatus.INACTIVE);
                 System.out.println(e.getMessage());
             }
