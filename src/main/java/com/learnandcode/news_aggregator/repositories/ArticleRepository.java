@@ -1,6 +1,7 @@
 package com.learnandcode.news_aggregator.repositories;
 
 import com.learnandcode.news_aggregator.model.Article;
+import com.learnandcode.news_aggregator.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,9 +11,6 @@ import java.util.List;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     boolean existsByUrl(String url);
-//    List<Article> findByPublishedAtBetween(LocalDateTime start, LocalDateTime end);
-//    List<Article> findByPublishedAtBetweenAndCategoryId_IdOrderByPublishedAtDesc(LocalDateTime start, LocalDateTime end, Long categoryId);
-//    List<Article> findByTitleContainingIgnoreCaseOrderByPublishedAtDesc(String searchTerm);
     @Query("SELECT a FROM Article a WHERE a.hidden = false AND a.categoryId.hidden = false AND a.publishedAt BETWEEN :start AND :end")
     List<Article> findVisibleByPublishedAtBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
@@ -21,5 +19,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("SELECT a FROM Article a WHERE a.hidden = false AND a.categoryId.hidden = false AND LOWER(a.title) LIKE %:searchTerm% ORDER BY a.publishedAt DESC")
     List<Article> searchVisibleArticles(@Param("searchTerm") String searchTerm);
+
+    List<Article> findByHiddenFalseAndTitleContainingIgnoreCaseOrHiddenFalseAndDescriptionContainingIgnoreCase(String keyword1, String keyword2);
+
+    List<Article> findByCategoryIdInAndHiddenFalse(List<Category> categories);
 }
 

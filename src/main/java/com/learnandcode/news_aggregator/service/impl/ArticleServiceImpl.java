@@ -1,16 +1,30 @@
 package com.learnandcode.news_aggregator.service.impl;
 
 import com.learnandcode.news_aggregator.dto.ArticleDateRangeAndCategoryDTO;
+import com.learnandcode.news_aggregator.dto.KeywordConfigurationDTO;
+import com.learnandcode.news_aggregator.dto.UserCategoryConfigurationDTO;
+import com.learnandcode.news_aggregator.exception.UserNotFoundException;
 import com.learnandcode.news_aggregator.model.Article;
+import com.learnandcode.news_aggregator.model.Category;
+import com.learnandcode.news_aggregator.model.SavedArticle;
+import com.learnandcode.news_aggregator.model.User;
 import com.learnandcode.news_aggregator.repositories.ArticleRepository;
 import com.learnandcode.news_aggregator.repositories.BlockedKeywordRepository;
+import com.learnandcode.news_aggregator.repositories.CategoryRepository;
+import com.learnandcode.news_aggregator.repositories.UserRepository;
 import com.learnandcode.news_aggregator.service.ArticleService;
+import com.learnandcode.news_aggregator.service.SavedArticleService;
+import com.learnandcode.news_aggregator.service.UserCategoryConfigurationService;
+import com.learnandcode.news_aggregator.service.UserKeywordConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,7 +34,16 @@ public class ArticleServiceImpl implements ArticleService {
     private ArticleRepository articleRepository;
     @Autowired
     private BlockedKeywordRepository blockedKeywordRepository;
-
+    @Autowired
+    private UserKeywordConfigurationService userKeywordConfigurationService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private UserCategoryConfigurationService userCategoryConfigurationService;
+    @Autowired
+    private SavedArticleService savedArticleService;
     private Set<String> getBlockedKeywords() {
         return blockedKeywordRepository.findAll()
                 .stream()
@@ -49,6 +72,40 @@ public class ArticleServiceImpl implements ArticleService {
     public List<Article> searchArticles(String searchTerm) {
         List<Article> articles = articleRepository.searchVisibleArticles(searchTerm.toLowerCase());
         return filterBlockedKeywords(articles);
+    }
+
+    @Override
+    public List<Article> getPersonalizedArticles() {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<User> user = userRepository.findByUsername(userName);
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        List<String> keywords = userKeywordConfigurationService.getUserKeywordConfigurations().stream()
+                .map(KeywordConfigurationDTO::getKeyword)
+                .map(String::toLowerCase)
+                .toList();
+
+        List<String> categoryNames = userCategoryConfigurationService.getUserCategoryConfigurations().stream()
+                .map(UserCategoryConfigurationDTO::getCategoryName)
+                .toList();
+
+        List<Category> categories = categoryRepository.findByNameIn(categoryNames);
+
+        Set<Article> recommendedArticles = new LinkedHashSet<>();
+
+        for (String keyword : keywords) {
+            recommendedArticles.addAll(
+                    articleRepository.findByHiddenFalseAndTitleContainingIgnoreCaseOrHiddenFalseAndDescriptionContainingIgnoreCase(keyword, keyword)
+            );
+        }
+
+        recommendedArticles.addAll(articleRepository.findByCategoryIdInAndHiddenFalse(categories));
+
+        return recommendedArticles.stream()
+                .limit(20)
+                .collect(Collectors.toList());
     }
 
     private List<Article> filterBlockedKeywords(List<Article> articles) {

@@ -32,4 +32,10 @@ public class ArticlesController {
         List<Article> articles = articleService.searchArticles(searchTerm);
         return ResponseEntity.ok(articles);
     }
+
+    @GetMapping("/personalized")
+    public ResponseEntity<List<Article>> getPersonalizedArticles() {
+        List<Article> articles = articleService.getPersonalizedArticles();
+        return ResponseEntity.ok(articles);
+    }
 }

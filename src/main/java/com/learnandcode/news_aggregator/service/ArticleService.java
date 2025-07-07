@@ -11,4 +11,5 @@ public interface ArticleService {
      List<Article> getArticlesByDateRangeAndCategory(ArticleDateRangeAndCategoryDTO articleDateRangeAndCategoryDTO);
 
      List<Article> searchArticles(String searchTerm);
+     List<Article> getPersonalizedArticles();
 }
