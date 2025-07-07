@@ -4,6 +4,15 @@ public class CategoryDTO {
     private Long id;
     private String name;
 
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    private boolean hidden;
 
     public Long getId() {
         return id;

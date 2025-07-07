@@ -11,6 +11,15 @@ public class ArticleDTO {
     private String publishedAt;
     private String fetchedAt;
     private CategoryDTO categoryId;
+    private boolean hidden;
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
 
     public CategoryDTO getCategoryId() {
         return categoryId;

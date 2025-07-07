@@ -2,6 +2,7 @@ package com.learnandcode.news_aggregation_client.menu;
 
 import com.learnandcode.news_aggregation_client.service.AdminService;
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
+import com.learnandcode.news_aggregation_client.util.TokenStore;
 import com.learnandcode.news_aggregation_client.util.WelcomeMessageHelper;
 
 public class AdminMenu implements Menu {
@@ -20,7 +21,8 @@ public class AdminMenu implements Menu {
         System.out.println("2. View the external server's details");
         System.out.println("3. Update/Edit the external server's details");
         System.out.println("4. Add new News Category");
-        System.out.println("5. Logout");
+        System.out.println("5. Moderation Menu");
+        System.out.println("6. Logout");
 
         System.out.println("Enter Your Option: ");
         String choice = ScannerSingleton.getInstance().nextLine();
@@ -58,8 +60,10 @@ public class AdminMenu implements Menu {
                 adminService.addCategory(capitalizedName);
                 break;
             case "5":
-                // Logic to logout
+                menuManager.navigateTo("MODERATION");
+            case "6":
                 System.out.println("Logging out...");
+                TokenStore.clear();
                 menuManager.navigateTo("MAIN");
                 break;
             default:

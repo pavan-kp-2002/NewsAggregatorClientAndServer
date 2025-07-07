@@ -15,6 +15,7 @@ public class AppController {
         menuManager.register("NOTIFICATIONS", new NotificationsMenu(menuManager));
         menuManager.register("KEYWORD-CONFIG", new KeywordConfigurationMenu(menuManager));
         menuManager.register("CATEGORY-CONFIG", new CategoryConfigurationMenu(menuManager));
+        menuManager.register("MODERATION", new ModerationMenu(menuManager));
         menuManager.navigateTo("MAIN");
     }
 }
