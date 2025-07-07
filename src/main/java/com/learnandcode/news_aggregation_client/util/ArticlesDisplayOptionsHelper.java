@@ -3,10 +3,12 @@ package com.learnandcode.news_aggregation_client.util;
 import com.learnandcode.news_aggregation_client.menu.MenuManager;
 import com.learnandcode.news_aggregation_client.service.ArticlesService;
 import com.learnandcode.news_aggregation_client.service.HeadlineService;
+import com.learnandcode.news_aggregation_client.service.ModerationService;
 
 public class ArticlesDisplayOptionsHelper {
     private final ArticlesService articlesService;
     private final HeadlineService headlineService = new HeadlineService();
+    private final ModerationService moderationService = new ModerationService();
 
     public ArticlesDisplayOptionsHelper(ArticlesService articlesService) {
             this.articlesService = articlesService;
@@ -56,6 +58,16 @@ public class ArticlesDisplayOptionsHelper {
                     System.out.println("Invalid Article Id. Please enter a valid number.");
                 }
                 break;
+            case "6":
+                System.out.println("Enter Article Id to Report:");
+                String articleIdToReport = ScannerSingleton.getInstance().nextLine();
+                try {
+                    long articleId = Long.parseLong(articleIdToReport);
+                    moderationService.reportArticle(articleId);
+                }catch (NumberFormatException e) {
+                    System.out.println("Invalid Article Id. Please enter a valid number.");
+                    return;
+                }
             default:
                 System.out.println("Invalid choice, please try again.");
         }

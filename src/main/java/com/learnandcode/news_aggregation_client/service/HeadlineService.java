@@ -156,5 +156,6 @@ public class HeadlineService {
         System.out.println("3. Save Article");
         System.out.println("4. Like Article");
         System.out.println("5. Dislike Article");
+        System.out.println("6. Report Article");
     }
 }

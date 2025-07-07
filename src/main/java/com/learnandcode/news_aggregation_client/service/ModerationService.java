@@ -14,6 +14,10 @@ public class ModerationService {
         this.client = new OkHttpClient();
     }
 
+    public void reportArticle(Long articleId) {
+        callPost(BASE_URL + "/report/" + articleId, null, "Article reported");
+    }
+
     public void hideArticle(Long articleId) {
         callPost(BASE_URL + "/hide/article/" + articleId, null, "Article hidden");
     }

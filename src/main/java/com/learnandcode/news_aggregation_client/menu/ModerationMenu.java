@@ -1,10 +1,12 @@
 package com.learnandcode.news_aggregation_client.menu;
 
 import com.learnandcode.news_aggregation_client.service.ModerationService;
+import com.learnandcode.news_aggregation_client.service.ReportNotificationService;
 import com.learnandcode.news_aggregation_client.util.ScannerSingleton;
 
 public class ModerationMenu implements Menu{
     private final ModerationService moderationService = new ModerationService();
+    private final ReportNotificationService reportNotificationService = new ReportNotificationService();
     private final MenuManager menuManager;
 
     public ModerationMenu(MenuManager menuManager) {
@@ -20,7 +22,9 @@ public class ModerationMenu implements Menu{
         System.out.println("4. Unhide a Category");
         System.out.println("5. Block a Keyword");
         System.out.println("6. Unblock a Keyword");
-        System.out.println("7. Back to Admin Menu");
+        System.out.println("7. View Unread Reported Articles");
+        System.out.println("8. View All Reported Articles");
+        System.out.println("9. Back to Admin Menu");
 
         System.out.println("Enter Your Option: ");
         String choice = ScannerSingleton.getInstance().nextLine();
@@ -56,6 +60,13 @@ public class ModerationMenu implements Menu{
                 moderationService.unblockKeyword(unblockKeyword);
                 break;
             case "7":
+                System.out.println("Viewing Unread Reported Articles:");
+                reportNotificationService.viewUnreadReportedArticlesNotifications();
+                break;
+            case "8":
+                System.out.println("Viewing All Reported Articles:");
+                reportNotificationService.viewAllReportedArticlesNotifications();
+            case "9":
                 menuManager.navigateTo("ADMIN");
                 return;
             default:
